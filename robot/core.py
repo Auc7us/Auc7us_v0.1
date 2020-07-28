@@ -1,4 +1,4 @@
-from ..comm.pwm import PWM
+from pwm import PWM
 from time import sleep
 
 """ joint_key convention:
@@ -6,17 +6,26 @@ from time import sleep
     F - front, M - middle, B - back
     H - hip, K - knee, A - Ankle
     key : (channel, minimum_pulse_length, maximum_pulse_length) """
-
 joint_properties = {
 
-    'LFH': (0, 248, 398), 'LFK': (1, 188, 476), 'LFA': (2, 131, 600),
-    'RFH': (3, 275, 425), 'RFK': (4, 227, 507), 'RFA': (5, 160, 625),
-    'LMH': (6, 312, 457), 'LMK': (7, 251, 531), 'LMA': (8, 138, 598),
-    'RMH': (9, 240, 390), 'RMK': (10, 230, 514), 'RMA': (11, 150, 620),
+    'LFH': (0, 330, 480, -1), 'LFK': (1, 200, 515, -1), 'LFA':  (2, 130, 610, 1),
+    'RFH':  (3, 380, 530, 1), 'RFK':  (4, 300, 615, 1), 'RFA': (5, 130, 610, -1),
+    'LMH': (6, 320, 470, -1), 'LMK': (7, 251, 531, -1), 'LMA':  (8, 130, 610, 1),
+    'RMH':  (9, 380, 530, 1), 'RMK': (10, 290, 605, 1), 'RMA':(11, 150, 630, -1),
+    'LBH':(12, 350, 500, -1), 'LBK':(13, 200, 515, -1), 'LBA': (14, 180, 660, 1),
+    'RBH': (15, 350, 500, 1), 'RBK': (16, 300, 615, 1), 'RBA':(17, 130, 610, -1),
+    'N':   (18, 150, 650, 1) }
+
+"""joint_properties = {
+
+    'LFH':  (0, 248, 398), 'LFK':  (1, 188, 476), 'LFA':  (2, 131, 600),
+    'RFH':  (3, 275, 425), 'RFK':  (4, 227, 507), 'RFA':  (5, 160, 625),
+    'LMH':  (6, 312, 457), 'LMK':  (7, 251, 531), 'LMA':  (8, 138, 598),
+    'RMH':  (9, 240, 390), 'RMK': (10, 230, 514), 'RMA': (11, 150, 620),
     'LBH': (12, 315, 465), 'LBK': (13, 166, 466), 'LBA': (14, 140, 620),
     'RBH': (15, 320, 480), 'RBK': (16, 209, 499), 'RBA': (17, 150, 676),
-    'N': (18, 150, 650)
-}
+    'N':   (18, 150, 650)
+}"""
 
 driver1 = PWM(0x40)
 driver2 = PWM(0x41)
@@ -35,7 +44,7 @@ def constrain(val, min_val, max_val):
     return min(max_val, max(min_val, val))
 
 
-def remap(old_val, (old_min, old_max), (new_min, new_max)):
+def remap(old_val, old_min, old_max, new_min, new_max):
     new_diff = (new_max - new_min)*(old_val - old_min) / float((old_max - old_min))
     return int(round(new_diff)) + new_min 
 
@@ -46,14 +55,14 @@ class HexapodCore:
 
         self.neck = Joint("neck", 'N')
 
-        self.left_front = Leg('left front', 'LFH', 'LFK', 'LFA')
-        self.right_front = Leg('right front', 'RFH', 'RFK', 'RFA')
+        self.left_front   = Leg('left front', 'LFH', 'LFK', 'LFA')
+        self.right_front  = Leg('right front', 'RFH', 'RFK', 'RFA')
 
-        self.left_middle = Leg('left middle', 'LMH', 'LMK', 'LMA')
+        self.left_middle  = Leg('left middle', 'LMH', 'LMK', 'LMA')
         self.right_middle = Leg('right middle', 'RMH', 'RMK', 'RMA')
         
-        self.left_back = Leg('left back', 'LBH', 'LBK', 'LBA')
-        self.right_back = Leg('right back', 'RBH', 'RBK', 'RBA')
+        self.left_back    = Leg('left back', 'LBH', 'LBK', 'LBA')
+        self.right_back   = Leg('right back', 'RBH', 'RBK', 'RBA')
 
         self.legs = [self.left_front, self.right_front,
                      self.left_middle, self.right_middle,
@@ -129,7 +138,8 @@ class Joint:
     def __init__(self, joint_type, jkey, maxx = 90, leeway = 0):
 
         self.joint_type, self.name =  joint_type, jkey
-        self.channel, self.min_pulse, self.max_pulse = joint_properties[jkey]
+        self.channel, self.min_pulse, self.max_pulse, self.direction = joint_properties[jkey]
+        #self.channel, self.min_pulse, self.max_pulse = joint_properties[jkey] #meant for symmetric servo arrangement  
         self.max, self.leeway = maxx, leeway
 
         self.off()
@@ -137,12 +147,12 @@ class Joint:
     def pose(self, angle = 0):
 
         angle = constrain(angle, -(self.max + self.leeway), self.max + self.leeway)
-        pulse = remap(angle, (-self.max, self.max), (self.min_pulse, self.max_pulse))
+        pulse = remap((angle * self.direction), (-self.max, self.max), (self.min_pulse, self.max_pulse))
 
         drive(self.channel, pulse)
         self.angle = angle
         
-        #print repr(self), ':', 'pulse', pulse
+        #print(repr(self), ':', 'pulse', pulse)
 
     def off(self):
         drive(self.channel, 0)

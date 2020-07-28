@@ -5,7 +5,7 @@ class HexapodPro(Hexapod):
 
     def shake_head(self, maxx = 60, repetitions = 5, t = 0.2):
 
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             self.look(maxx, t)
             self.look(-maxx, t)
         
@@ -24,7 +24,7 @@ class HexapodPro(Hexapod):
         self.left_front.ankle.pose()
         self.left_front.knee.pose(-50)
         
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             self.left_front.hip.pose(-45)
             sleep(t)
             self.left_front.hip.pose(45)
@@ -34,12 +34,12 @@ class HexapodPro(Hexapod):
 
         self.squat(60, t)
 
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             
-            for angle in xrange(-maxx, maxx, step):
+            for angle in range(-maxx, maxx, step):
                 self.twist_hip(angle, t)
             
-            for angle in xrange(maxx, -maxx, -step):
+            for angle in range(maxx, -maxx, -step):
                 self.twist_hip(angle, t)
 
         self.twist_hip()
@@ -64,7 +64,7 @@ class HexapodPro(Hexapod):
 
         self.lean_back()
 
-        for r in xrange(repetitions):
+        for r in range(repetitions):
 
             self.left_front.knee.pose(up)
             self.right_front.knee.pose(down)
@@ -78,7 +78,7 @@ class HexapodPro(Hexapod):
 
     def tilt_left_and_right(self, raised = 60, floor = 20, repetitions = 5, t = 0.15):
         
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             self.tilt_side(left_angle = floor, right_angle = raised)
             self.tilt_side(left_angle = raised, right_angle = floor)
 
@@ -86,7 +86,7 @@ class HexapodPro(Hexapod):
 
     def tilt_front_and_back(self, up = 60, mid = 40, down = 20, repetitions = 5, t = 0.15):
         
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             self.tilt(up, mid, down)
             self.tilt(down, mid, up)
 
@@ -94,7 +94,7 @@ class HexapodPro(Hexapod):
     
     def dance_tilt(self, raised = 60, mid = 40, floor = 20, repetitions = 3, t = 0.15):
 
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             
             self.tilt(floor, mid, raised, t) # front
             self.tilt_side(raised, floor, t) # right
@@ -105,7 +105,7 @@ class HexapodPro(Hexapod):
 
     def rock_body(self,  offset = 45, floor = 50, repetitions = 7):
 
-        for r in xrange(repetitions):
+        for r in range(repetitions):
             self.uniform_move(self.left_legs, offset, floor, 0)
             self.uniform_move(self.right_legs, -offset, floor, 0.2)
             self.uniform_move(self.left_legs, -offset, floor, 0)

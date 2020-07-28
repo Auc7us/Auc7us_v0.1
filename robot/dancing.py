@@ -1,4 +1,4 @@
-from proMove import HexapodPro
+from pro import HexapodPro
 from time import sleep
 
 class DancingHexapod(HexapodPro):
