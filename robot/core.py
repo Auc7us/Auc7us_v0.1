@@ -1,43 +1,78 @@
-from pwm import PWM
-from time import sleep
+from __future__ import division
+import time
+#from board import SCL, SDA
+#import busio
+import Adafruit_PCA9685
+
+
 
 """ joint_key convention:
     R - right, L - left
     F - front, M - middle, B - back
     H - hip, K - knee, A - Ankle
     key : (channel, minimum_pulse_length, maximum_pulse_length) """
-joint_properties = {
 
-    'LFH': (0, 330, 480, -1), 'LFK': (1, 200, 515, -1), 'LFA':  (2, 130, 610, 1),
-    'RFH':  (3, 380, 530, 1), 'RFK':  (4, 300, 615, 1), 'RFA': (5, 130, 610, -1),
-    'LMH': (6, 320, 470, -1), 'LMK': (7, 251, 531, -1), 'LMA':  (8, 130, 610, 1),
-    'RMH':  (9, 380, 530, 1), 'RMK': (10, 290, 605, 1), 'RMA':(11, 150, 630, -1),
-    'LBH':(12, 350, 500, -1), 'LBK':(13, 200, 515, -1), 'LBA': (14, 180, 660, 1),
-    'RBH': (15, 350, 500, 1), 'RBK': (16, 300, 615, 1), 'RBA':(17, 130, 610, -1),
-    'N':   (18, 150, 650, 1) }
+#USE YOUR VALUES OF MIN AND MAX PULSE LENGTHS
+"""
+joint_properties = 
+  {
+    'LFH':  (10, 330, 480, -1),   #LFtibia
+    'LFK':  (11, 200, 515, -1),   #LFfemur
+    'LFA':  (12, 130, 610,  1),   #LFcoxa
+    'RFH':  (13, 380, 530,  1),   #RFtibia
+    'RFK':  (14, 300, 615,  1),   #RFfemur
+    'RFA':  (15, 130, 610, -1),   #RFcoxa
+    'LMH':  ( 4, 320, 470, -1),   #LMtibia
+    'LMK':  ( 5, 251, 531, -1),   #LMfemur
+    'LMA':  ( 6, 130, 610,  1),   #LMcoxa
+    'RMH':  ( 7, 380, 530,  1),   #RMtibia
+    'RMK':  ( 8, 290, 605,  1),   #RMfemur
+    'RMA':  ( 9, 150, 630, -1),   #RMcoxa
+    'LBH':  (17, 350, 500, -1),   #LBtibia
+    'LBK':  ( 0, 200, 515, -1),   #LBfemur
+    'LBA':  ( 1, 180, 660,  1),   #LBcoxa
+    'RBH':  (18, 350, 500,  1),   #RBtibia
+    'RBK':  ( 3, 300, 615,  1),   #RBfemur
+    'RBA':  ( 2, 130, 610, -1),   #RBcoxa
+    'N':    (19, 150, 650,  1)    #Neck
+  }
+"""
+joint_properties = 
+  {
+    'LFH':  (10, 110, 600, -1),   #LFtibia
+    'LFK':  (11, 110, 600, -1),   #LFfemur
+    'LFA':  (12, 110, 600,  1),   #LFcoxa
+    'RFH':  (13, 110, 600,  1),   #RFtibia
+    'RFK':  (14, 110, 600,  1),   #RFfemur
+    'RFA':  (15, 110, 600, -1),   #RFcoxa
+    'LMH':  ( 4, 110, 600, -1),   #LMtibia
+    'LMK':  ( 5, 110, 600, -1),   #LMfemur
+    'LMA':  ( 6, 110, 600,  1),   #LMcoxa
+    'RMH':  ( 7, 110, 600,  1),   #RMtibia
+    'RMK':  ( 8, 110, 600,  1),   #RMfemur
+    'RMA':  ( 9, 110, 600, -1),   #RMcoxa
+    'LBH':  (17, 110, 600, -1),   #LBtibia
+    'LBK':  ( 0, 110, 600, -1),   #LBfemur
+    'LBA':  ( 1, 110, 600,  1),   #LBcoxa
+    'RBH':  (18, 110, 600,  1),   #RBtibia
+    'RBK':  ( 3, 110, 600,  1),   #RBfemur
+    'RBA':  ( 2, 110, 600, -1),   #RBcoxa
+    'N':    (19, 110, 600,  1)    #Neck
+  }
 
-"""joint_properties = {
+driver1 = Adafruit_PCA9685.PCA9685(address=0x40)
+driver2 = Adafruit_PCA9685.PCA9685(address=0x41)
 
-    'LFH':  (0, 248, 398), 'LFK':  (1, 188, 476), 'LFA':  (2, 131, 600),
-    'RFH':  (3, 275, 425), 'RFK':  (4, 227, 507), 'RFA':  (5, 160, 625),
-    'LMH':  (6, 312, 457), 'LMK':  (7, 251, 531), 'LMA':  (8, 138, 598),
-    'RMH':  (9, 240, 390), 'RMK': (10, 230, 514), 'RMA': (11, 150, 620),
-    'LBH': (12, 315, 465), 'LBK': (13, 166, 466), 'LBA': (14, 140, 620),
-    'RBH': (15, 320, 480), 'RBK': (16, 209, 499), 'RBA': (17, 150, 676),
-    'N':   (18, 150, 650)
-}"""
+driver1.set_pwm_freq(60)
+driver2.set_pwm_freq(60)
 
-driver1 = PWM(0x40)
-driver2 = PWM(0x41)
-
-driver1.setPWMFreq(60)
-driver2.setPWMFreq(60)
-
+#servo_min = 110  # Min pulse length out of 4096
+#servo_max = 600  # Max pulse length out of 4096
 
 def drive(ch, val):
     driver = driver1 if ch < 16 else driver2
     ch = ch if ch < 16 else ch - 16    
-    driver.setPWM(ch, 0, val)
+    driver.set_pwm(ch, 0, val)
 
 
 def constrain(val, min_val, max_val):
@@ -160,4 +195,5 @@ class Joint:
 
     def __repr__(self):
         return 'joint: ' + self.joint_type + ' : ' + self.name + ' angle: ' + str(self.angle)
+ 
  
