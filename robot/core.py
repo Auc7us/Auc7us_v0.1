@@ -71,13 +71,13 @@ def drive(ch, val):
     driver = driver1 if ch < 16 else driver2
     ch = ch if ch < 16 else ch - 16    
     driver.set_pwm(ch, 0, val)
-
+    #driver.set_pwm(ch, 0, val+(remap(90,(0,180),(self.min_pulse, self.max_pulse))))
 
 def constrain(val, min_val, max_val):
     return min(max_val, max(min_val, val))
 
 
-def remap(old_val, old_min, old_max, new_min, new_max):
+def remap(old_val, (old_min, old_max), (new_min, new_max)):
     new_diff = (new_max - new_min)*(old_val - old_min) / float((old_max - old_min))
     return int(round(new_diff)) + new_min 
 
@@ -97,15 +97,15 @@ class HexapodCore:
         self.left_back    = Leg(   'left back', 'LBH', 'LBK', 'LBA')
         self.right_back   = Leg(  'right back', 'RBH', 'RBK', 'RBA')
 
-        self.legs = [self.left_front, self.right_front,
+        self.legs = [self.left_front,  self.right_front,
                      self.left_middle, self.right_middle,
-                     self.left_back, self.right_back]
+                     self.left_back,   self.right_back]
 
         self.right_legs = [self.right_front, self.right_middle, self.right_back]
-        self.left_legs = [self.left_front, self.left_middle, self.left_back]
+        self.left_legs  = [self.left_front,  self.left_middle,  self.left_back]
 
-        self.tripod1 = [self.left_front, self.right_middle, self.left_back]
-        self.tripod2 = [self.right_front, self.left_middle, self.right_back]
+        self.tripod1 = [self.left_front, self.right_middle,self.left_back]
+        self.tripod2 = [self.right_front,self.left_middle, self.right_back]
         
         self.hips, self.knees, self.ankles = [], [], []
 
@@ -128,12 +128,12 @@ class Leg:
 
         max_hip, max_knee, knee_leeway = 45, 50, 10
         
-        self.hip = Joint("hip", hip_key, max_hip)
-        self.knee = Joint("knee", knee_key, max_knee, leeway = knee_leeway)
-        self.ankle = Joint("ankle", ankle_key)
+        self.hip   = Joint("hip",  hip_key, max_hip)
+        self.knee  = Joint("knee", knee_key, max_knee, leeway = knee_leeway)
+        self.ankle = Joint("ankle",ankle_key)
 
-        self.name = name
-        self.joints = [self.hip, self.knee, self.ankle]
+        self.name  = name
+        self.joints= [self.hip, self.knee, self.ankle]
 
     def pose(self, hip_angle = 0, knee_angle = 0, ankle_angle = 0):
 
@@ -146,7 +146,7 @@ class Leg:
             knee angle minus the offset. offset best between 80 and 110 """
 
         if knee_angle == None: knee_angle = self.knee.angle
-        if hip_angle == None: hip_angle = self.hip.angle
+        if hip_angle  == None: hip_angle  = self.hip.angle
 
         self.pose(hip_angle, knee_angle, knee_angle - offset)
 
@@ -179,7 +179,7 @@ class Joint:
 
     def pose(self, angle = 0):
 
-        angle = constrain(angle, -(self.max + self.leeway), self.max + self.leeway)
+        angle = constrain(angle, -(self.max + self.leeway), self.max +  self.leeway)
         pulse = remap((angle * self.direction), (-self.max, self.max), (self.min_pulse, self.max_pulse))
 
         drive(self.channel, pulse)
