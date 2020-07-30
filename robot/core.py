@@ -14,8 +14,7 @@ import Adafruit_PCA9685
 
 #USE YOUR VALUES OF MIN AND MAX PULSE LENGTHS
 """
-joint_properties = 
-  {
+joint_properties = {
     'LFH':  (10, 330, 480, -1),   #LFtibia
     'LFK':  (11, 200, 515, -1),   #LFfemur
     'LFA':  (12, 130, 610,  1),   #LFcoxa
@@ -37,8 +36,7 @@ joint_properties =
     'N':    (19, 150, 650,  1)    #Neck
   }
 """
-joint_properties = 
-  {
+joint_properties = {
     'LFH':  (10, 110, 600, -1),   #LFtibia
     'LFK':  (11, 110, 600, -1),   #LFfemur
     'LFA':  (12, 110, 600,  1),   #LFcoxa
@@ -90,14 +88,14 @@ class HexapodCore:
 
         self.neck = Joint("neck", 'N')
 
-        self.left_front   = Leg('left front', 'LFH', 'LFK', 'LFA')
-        self.right_front  = Leg('right front', 'RFH', 'RFK', 'RFA')
+        self.left_front   = Leg(  'left front', 'LFH', 'LFK', 'LFA')
+        self.right_front  = Leg( 'right front', 'RFH', 'RFK', 'RFA')
 
-        self.left_middle  = Leg('left middle', 'LMH', 'LMK', 'LMA')
+        self.left_middle  = Leg( 'left middle', 'LMH', 'LMK', 'LMA')
         self.right_middle = Leg('right middle', 'RMH', 'RMK', 'RMA')
         
-        self.left_back    = Leg('left back', 'LBH', 'LBK', 'LBA')
-        self.right_back   = Leg('right back', 'RBH', 'RBK', 'RBA')
+        self.left_back    = Leg(   'left back', 'LBH', 'LBK', 'LBA')
+        self.right_back   = Leg(  'right back', 'RBH', 'RBK', 'RBA')
 
         self.legs = [self.left_front, self.right_front,
                      self.left_middle, self.right_middle,
@@ -155,10 +153,10 @@ class Leg:
     def replant(self, raised, floor, offset, t = 0.1):
 
         self.move(raised)
-        sleep(t)
+        time.sleep(t)
 
         self.move(floor, offset)
-        sleep(t)
+        time.sleep(t)
 
     def off(self):
         for joint in self.joints:

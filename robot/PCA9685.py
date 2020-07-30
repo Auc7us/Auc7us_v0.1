@@ -52,7 +52,7 @@ OUTDRV             = 0x04
 logger = logging.getLogger(__name__)
 
 
-def software_reset(i2c=None, **kwargs):
+def software_reset(self, i2c=None, **kwargs):
     #Sends a software reset (SWRST) command to all servo drivers on the bus.
     # Setup I2C interface for device 0x00 to talk to all of them.
     if i2c is None:
