@@ -68,24 +68,24 @@ class Hexapod(HexapodCore):
 
         sleep(t)
 
-    def walk(self, offset = 25 , swing =  25, raised = -30, floor = 50, repetitions = 4, t = 0.2):
+    def walk(self, offset = 20 , swing =  20, raised = -40, floor = 8, repetitions = 4, t = 0.2):
         """ if swing > 0, hexy moves forward else backward """
         
         swings = [offset - swing, swing, -(offset + swing)]
         reverse_swings = [-x for x in swings]
         
         for r in range(repetitions):
-            self.stride(self.tripod1, self.tripod2, swings, raised, floor, t)
+            self.stride(self.tripod1, self.tripod2, swings,         raised, floor, t)
             self.stride(self.tripod2, self.tripod1, reverse_swings, raised, floor, t)
 
-    def rotate(self, offset = 40, raised = -30, floor = 50, repetitions = 5, t = 0.2):
+    def rotate(self, offset = 25, raised = -40, floor = 8, repetitions = 5, t = 0.2):
         """ if offset > 0, hexy rotates left, else right """
        
         for r in range(repetitions):
             
             #replant tripod2 with an offset
-            self.uniform_move(self.tripod2, None, raised, t)
-            self.uniform_move(self.tripod2, offset, floor, t)
+            self.uniform_move(self.tripod2,   None, raised, t)
+            self.uniform_move(self.tripod2, offset,  floor, t)
 
             #raise tripod1
             self.uniform_move(self.tripod1, -offset, raised) 
@@ -101,11 +101,11 @@ class Hexapod(HexapodCore):
         """ first_tripod's legs replant to propel towards a direction while
             second_tripod's legs retrack by swinging to the opposite direction """
 
-        self.simultaneous_move(first_tripod, knee_angle = raised)
+        self.simultaneous_move( first_tripod, knee_angle = raised)
         sleep(t)
         
         self.simultaneous_move(second_tripod, swing[::-1])
-        self.simultaneous_move(first_tripod, swing, floor)
+        self.simultaneous_move( first_tripod, swing,floor)
         sleep(t)
 
     def tilt_side(self, left_angle = 50, right_angle = 0, t = 0.2):
@@ -118,14 +118,14 @@ class Hexapod(HexapodCore):
     def tilt(self, front_angle = 50, middle_angle = 25, back_angle = 0, t = 0.2):
         """ if front_angle > middle_angle > back_angle hexy's front is higher than his back """
 
-        self.right_front.move(knee_angle = front_angle)
-        self.left_front.move(knee_angle = front_angle)
+        self.right_front.move(knee_angle  =  front_angle)
+        self.left_front.move(knee_angle   =  front_angle)
 
         self.right_middle.move(knee_angle = middle_angle)
-        self.left_middle.move(knee_angle = middle_angle)
+        self.left_middle.move(knee_angle  = middle_angle)
 
-        self.right_back.move(knee_angle = back_angle)
-        self.left_back.move(knee_angle = back_angle)
+        self.right_back.move(knee_angle   =   back_angle)
+        self.left_back.move(knee_angle    =   back_angle)
 
         sleep(t)
 
@@ -137,10 +137,10 @@ class Hexapod(HexapodCore):
         self.look()
         self.squat(floor, t)
         
-        self.simultaneous_move(self.tripod1, swings, raised, t)
-        self.simultaneous_move(self.tripod1, swings, floor, t)
+        self.simultaneous_move(self.tripod1, swings,       raised, t)
+        self.simultaneous_move(self.tripod1, swings,       floor,  t)
         self.simultaneous_move(self.tripod2, swings[::-1], raised, t)
-        self.simultaneous_move(self.tripod2, swings[::-1], floor, t)
+        self.simultaneous_move(self.tripod2, swings[::-1], floor,  t)
 
     def uniform_move(self, legs, hip_angle = None, knee_angle = None, t = 0):
         """ moves all legs with hip_angle, knee_angle """
