@@ -39,22 +39,22 @@ joint_properties = {
 joint_properties = {
     'LFH':  (10, 110, 600, -1),   #LFtibia
     'LFK':  (11, 110, 600, -1),   #LFfemur
-    'LFA':  (12, 110, 600,  1),   #LFcoxa
+    'LFA':  (12, 110, 600, -1),   #LFcoxa
     'RFH':  (13, 110, 600,  1),   #RFtibia
     'RFK':  (14, 110, 600,  1),   #RFfemur
-    'RFA':  (15, 110, 600, -1),   #RFcoxa
+    'RFA':  (15, 110, 600,  1),   #RFcoxa
     'LMH':  ( 4, 110, 600, -1),   #LMtibia
     'LMK':  ( 5, 110, 600, -1),   #LMfemur
-    'LMA':  ( 6, 110, 600,  1),   #LMcoxa
+    'LMA':  ( 6, 110, 600, -1),   #LMcoxa
     'RMH':  ( 7, 110, 600,  1),   #RMtibia
     'RMK':  ( 8, 110, 600,  1),   #RMfemur
-    'RMA':  ( 9, 110, 600, -1),   #RMcoxa
+    'RMA':  ( 9, 110, 600,  1),   #RMcoxa
     'LBH':  (17, 110, 600, -1),   #LBtibia
     'LBK':  ( 0, 110, 600, -1),   #LBfemur
-    'LBA':  ( 1, 110, 600,  1),   #LBcoxa
+    'LBA':  ( 1, 110, 600, -1),   #LBcoxa
     'RBH':  (18, 110, 600,  1),   #RBtibia
     'RBK':  ( 3, 110, 600,  1),   #RBfemur
-    'RBA':  ( 2, 110, 600, -1),   #RBcoxa
+    'RBA':  ( 2, 110, 600,  1),   #RBcoxa
     'N':    (19, 110, 600,  1)    #Neck
   }
 
@@ -141,9 +141,9 @@ class Leg:
         self.knee.pose(knee_angle)
         self.ankle.pose(ankle_angle)
 
-    def move(self, knee_angle = None, hip_angle = None, offset = 100):
+    def move(self, knee_angle = None, hip_angle = None, offset = 12):
         """ knee_angle < 0 means thigh is raised, ankle's angle will be set to the specified 
-            knee angle minus the offset. offset best between 80 and 110 """
+            knee angle minus the offset."""
 
         if knee_angle == None: knee_angle = self.knee.angle
         if hip_angle  == None: hip_angle  = self.hip.angle
